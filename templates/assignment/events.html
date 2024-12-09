@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Management</title>
+    <style>
+        /* Basic reset */
+        body {
+            margin: 0;
+            font-family: 'Russo One', sans-serif; /* Space-inspired font */
+            background-color: #1a1a1a; /* Dark background */
+            color: #f0f0f0; /* Light text for contrast */
+            background-image: url('https://source.unsplash.com/1920x1080/?galaxy'); /* Galaxy background */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* Sidebar Styling */
+  .sidebar {
+        width: 250px;
+        background-color: rgba(0, 0, 0, 0.9); /* Slightly darker for contrast */
+        color: #f0f0f0;
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar h2 {
+        color: #ff3c00; /* Make the title stand out */
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+
+    .sidebar a {
+        color: #f0f0f0;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin: 5px 0;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+        /* Main content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent content background */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, p {
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); /* Subtle shadow */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Press Start 2P', cursive; /* Retro comic font */
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Space between form elements */
+        }
+
+        input[type="text"], input[type="date"], input[type="number"] {
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #2c2c2c; /* Darker input background */
+            color: #f0f0f0;
+            outline: none;
+            width: 100%; /* Full width */
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+            border-color: #ff3c00; /* Highlight border on focus */
+        }
+
+        button {
+            background-color: #ff3c00;
+            border: none;
+            color: #1a1a1a; /* Contrast text */
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%; /* Full width */
+        }
+
+        button:hover {
+            background-color: #e02e00; /* Darker on hover */
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #444;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2c2c2c;
+        }
+
+        td {
+            background-color: #1a1a1a;
+        }
+
+        /* Button for delete actions */
+        form button {
+            background-color: #ff3c00;
+            border: none;
+            color: #1a1a1a; /* Contrast text */
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #e02e00;
+        }
+        .filter-sort-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .filter-sort-section select, .filter-sort-section input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        .filter-sort-section button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-sort-section button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Event Manager</h2>
+        <a href="{{ url_for('Home_page') }}" aria-label="Navigate to Home">Home</a>
+        <a href="{{ url_for('manage_events') }}" aria-label="Manage Events">Events</a>
+        <a href="{{ url_for('about') }}" aria-label="About the Event Manager">About</a>
+        <a href="/" aria-label="Exit Application">Exit</a>
+    </div>
+    <div class="content">
+        <h1>Manage Events</h1>
+        <form action="{{ url_for('manage_events') }}" method="POST">
+            <h2>Add New Event</h2>
+            <input type="text" name="event_name" placeholder="Event Name" required>
+            <input type="text" name="customer_name" placeholder="Customer Name" required>
+            <input type="date" name="event_date" required>
+            <input type="number" name="advance_payment" placeholder="Advance Payment" required>
+            <input type="number" name="total_payment" placeholder="Total Payment" required>
+            <label>
+                <input type="checkbox" name="full_day"> Full Day
+            </label>
+            <button type="submit">Add Event</button>
+        </form>
+        <br>
+       <!-- Filter and Sort Section -->
+    <div class="filter-sort-section">
+        <form action="{{ url_for('manage_events') }}" method="GET">
+            <!-- Filter by Full Day -->
+            <label for="filter_full_day">Full Day:</label>
+            <select name="filter_full_day" id="filter_full_day">
+                <option value="">Select</option>
+                <option value="true" {% if request.args.get('filter_full_day') == 'true' %}selected{% endif %}>Yes</option>
+                <option value="false" {% if request.args.get('filter_full_day') == 'false' %}selected{% endif %}>No</option>
+            </select>
+
+            <!-- Sort by Date -->
+            <label for="sort_date">Sort by Date:</label>
+            <select name="sort_date" id="sort_date">
+                <option value="">Select</option>
+                <option value="asc" {% if request.args.get('sort_date') == 'asc' %}selected{% endif %}>Ascending</option>
+                <option value="desc" {% if request.args.get('sort_date') == 'desc' %}selected{% endif %}>Descending</option>
+            </select>
+
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+        <br>
+        <h2>Existing Events</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                    <th>Advance Payment</th>
+                    <th>Total Payment</th>
+                    <th>Full Day</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event.id }}</td>
+                        <td>{{ event.customer_name }}</td>
+                        <td>{{ event.name }}</td>
+                        <td>{{ event.date }}</td>
+                        <td>{{ event.advance_payment }}</td>
+                        <td>{{ event.total_payment }}</td>
+                        <td>{{ event.full_day }}</td>
+                        <td>
+                            <a href="{{ url_for('update_event', id=event.id) }}">Edit</a>
+                            <form action="{{ url_for('delete_event', id=event.id) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function applyFilters() {
+            const eventName = document.getElementById('filter-event-name').value.toLowerCase();
+            const customerName = document.getElementById('filter-customer-name').value.toLowerCase();
+            const eventDate = document.getElementById('filter-event-date').value;
+
+            const rows = document.querySelectorAll('#events-table tbody tr');
+            rows.forEach(row => {
+                const eventNameCell = row.cells[2].textContent.toLowerCase();
+                const customerNameCell = row.cells[1].textContent.toLowerCase();
+                const eventDateCell = row.cells[3].textContent;
+
+                if (
+                    (eventName === '' || eventNameCell.includes(eventName)) &&
+                    (customerName === '' || customerNameCell.includes(customerName)) &&
+                    (eventDate === '' || eventDateCell === eventDate)
+                ) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

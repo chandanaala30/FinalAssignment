@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Event Manager - Home</title>
+<!-- Include Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ8vJ6f9Do1H2Gb82L5k9g2ImQbb27+oS9lGocpSAwR7CmOFS1+a+1xaXYK9" crossorigin="anonymous">
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+
+<!-- Google Fonts: Comic Sans and Marvel-style fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Russo+One&display=swap" rel="stylesheet">
+
+<style>
+    /* Basic reset */
+    body {
+        margin: 0;
+        font-family: 'Russo One', sans-serif; /* Space-inspired font */
+        background-color: #1a1a1a; /* Dark background */
+        color: #f0f0f0; /* Light text for contrast */
+        background-image: url('https://source.unsplash.com/1920x1080/?galaxy'); /* Galaxy background */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    /* Flexbox layout */
+    .wrapper {
+        display: flex;
+        height: 100vh;
+    }
+
+       /* Sidebar Styling */
+       .sidebar {
+        width: 250px;
+        background-color: rgba(0, 0, 0, 0.9); /* Slightly darker for contrast */
+        color: #f0f0f0;
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar h2 {
+        color: #ff3c00; /* Make the title stand out */
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+
+    .sidebar a {
+        color: #f0f0f0;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin: 5px 0;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+        background-color: #ff3c00;
+        color: #1a1a1a; /* Contrast text */
+    }
+
+
+    .content {
+        flex: 1;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent content background */
+        overflow-y: auto;
+    }
+
+    h1, h2, h3, p {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); /* Subtle shadow */
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Press Start 2P', cursive; /* Retro comic font */
+    }
+
+    .calendar-container {
+        max-width: 900px;
+        margin: 0 auto;
+        border: 5px solid #4a148c; /* Purple border */
+        padding: 10px;
+        border-radius: 10px;
+        background-color: rgba(0, 0, 0, 0.5); /* Darker container */
+    }
+
+    .fc-event {
+        background-color: #ff4d4d;
+        border-color: #ff4d4d;
+    }
+
+    /* Styling for buttons */
+    .btn-primary {
+        background-color: #f44336; /* Red for Marvel theme */
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-family: 'Russo One', sans-serif;
+        text-transform: uppercase;
+    }
+
+    .btn-primary:hover {
+        background-color: #d32f2f;
+        box-shadow: 0 0 10px #ff0000; /* Glowing effect */
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Event Manager</h2>
+        <a href="{{ url_for('Home_page') }}">Home</a>
+        <a href="{{ url_for('manage_events') }}">Events</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="/">Exit</a>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+        <h1>Welcome to Event Manager</h1>
+        <p>Organize and track your events with ease. Navigate using the menu on the left to manage events or learn more about us.</p>
+
+        <!-- Calendar Section -->
+        <div class="calendar-container">
+            <h2>Event Calendar</h2>
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+
+<!-- JavaScript to render the calendar with booked dates -->
+<script>
+    // Get the booked dates from Flask context
+    const bookedDates = {{ booked_dates | tojson | safe }};
+    console.log(bookedDates);  // Debugging output
+
+    // Initialize FullCalendar
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: bookedDates,
+            eventColor: '#ff4d4d', // Red color for booked events
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+            },
+            eventClick: function(info) {
+                alert('Event: ' + info.event.title + '\nDate: ' + info.event.start.toLocaleString());
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+
+{% endblock %}
